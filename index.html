@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <title>RC Trivia</title>
+
+  <meta charset="utf-8">
+
+  <!-- Viewport - for management of various device sizes -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- Style Sheets -->
+  <!-- Bootstrap style sheet - verify current version -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+  <!-- Personal style sheet - change location  -->
+  <link rel="stylesheet" type="text/css" href="assets/css/style.css">
+
+  <!-- Link jquery here -->
+  <!-- uncompressed -->
+  <script
+  src="https://code.jquery.com/jquery-3.2.1.js"
+  integrity="sha256-DZAnKJ/6XZ9si04Hgrsxu/8s717jcIzLy3oi35EouyE="
+  crossorigin="anonymous"></script>
+
+ <!-- Link javascript -->
+  <script type="text/javascript" src="assets/javascript/app.js"></script>
+
+</head>
+<body>
+  
+<!--  Bootstrap Grid  -->
+<div class="container-fluid text-center">  
+
+  <!-- An empty row for spacing -->
+  <div class="row emptyRow">
+    <div class="col-md-12 ">
+    </div>
+  </div>
+  
+  <div class="row mainHdr">
+    <div class="col-md-8 col-md-offset-2 text-center hdr-container"> 
+      
+      <div class="row">
+       <h1 class="text-primary headers" ><strong>Roller Coaster Trivia</strong></h1>
+      </div> 
+      <div class="row">
+       <h1 class="text-primary headers">Time Remaining: <span class="gameTimer"></span></h1>
+      </div>
+    </div>
+  </div>
+
+  <!-- The main section with all the quesitons -->
+  <div class="row mainRow">
+    <div class="col-md-8 col-md-offset-2 text-center main-container">
+      <div class="triviaList">
+      
+        <div class = "row startRow">
+          <div class="col-md-4 col-md-offset-4">
+            <h3 class="text-primary startButton">START</h3>
+          </div>
+        </div>
+      </div> 
+    </div>
+  </div>  <!-- End of Row -->
+
+</div>  <!-- End of Row -->
+
+</body>
+</html>
