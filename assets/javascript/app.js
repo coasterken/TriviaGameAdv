@@ -14,9 +14,8 @@ var unanswered = 0;
 var questionNumber = 0
 
 var timerSeconds = 0;
-var timeToWait = 30;
+var timeToWait = 20;
 var intervalId;
-
 
 var questions = {
   q0: {question: "World's tallest steel coaster?",
@@ -117,11 +116,16 @@ $(".answerPage").addClass("hide");
 $(".gameTimer").html(timeToWait);
 
 //********* Events 
-// Start logic
+// Start logic ((also restart)
 $(".startButton").on("click", function() {
 
   // hide start button
   $(".startRow").addClass("hide");
+
+  questionNumber = 0;
+  correctAnswers = 0;
+  incorrectAnswers = 0;
+  unanswered = 0;
 
   //display first question
   displayQuestion();
@@ -135,16 +139,13 @@ $(".answerBox").on("click", function() {
   clearInterval(intervalId);
 
   if ($(this).data("rightAnswer") === true) {
-    
     displayCongratsPage();
-
   } else {
-    
     displaySorryPage("incorrect");
   }
-
-})
+}) //********** end of answer click logic
   
+
 //**********  Functions  **********
 
 // displays the questions and answers
@@ -187,7 +188,6 @@ function displayQuestion() {
 } //********** end of display quesiton
 
 //Congrats Page - displays if the answer is correct
-
 function displayCongratsPage() {
 
    correctAnswers++
@@ -195,17 +195,19 @@ function displayCongratsPage() {
    $(".questionRow").addClass("hide");
    $(".ansExclaim").html("Correct!");
    $(".ansMessage1").html("U So Good!");
-   $(".ansMessage2").html("");  
+   $(".ansMessage2").html(""); 
+   $(".ansImg").html("");  
    $(".answerPage").removeClass("hide");
 
    setTimeout(displayQuestion, 3000);
 
 }  //  ********* end of congrats page function
 
+// Sorry page - displays when anwer is wrong or time expires
 function displaySorryPage(type) {
 
   var mainMessage = "";
-
+  // set the message
   if (type === "timer") {
     unanswered++;
     mainMessage = "Sorry - The Timer Expired!";
@@ -214,8 +216,8 @@ function displaySorryPage(type) {
     mainMessage = "Sorry!";
   }
 
-   //hide the questions
-   var theAnswer = "";
+  //find the correct answer - probably a better way to do this
+  var theAnswer = "";
 
   for (var i = 0; i < 5; i++) {
     if ($("#answerBox" + i).data("rightAnswer") === true ) {
@@ -224,16 +226,19 @@ function displaySorryPage(type) {
     }
   }
 
+  //hide and display
   $(".questionRow").addClass("hide");
   $(".ansExclaim").html(mainMessage);
   $(".ansMessage1").html("The correct answer is " + theAnswer);
-  $(".ansMessage2").html("");  
+  $(".ansMessage2").html(""); 
+  $(".ansImg").html(""); 
   $(".answerPage").removeClass("hide");
 
    setTimeout(displayQuestion, 3000);
 
 }  //  ********* end of congrats page function
 
+//display the results - number correct, etc
 function displayResults() {
 
   $(".gameTimer").html(0);
@@ -242,8 +247,20 @@ function displayResults() {
   $(".ansMessage2").html("Incorrect Answers: " + incorrectAnswers);  
   $(".ansImg").html("Unanswered: " + unanswered);
 
-}
+  setTimeout(displayRestart, 5000);
+}  //*******  end of display results
 
+//displays a restart button at the end - reuses start button
+function displayRestart() {
+
+  $(".gameTimer").html(timeToWait);
+  $(".startButton").html("RESTART");
+  $(".answerPage").addClass("hide");
+  $(".startRow").removeClass("hide");
+
+}// end of display restart
+
+// countdown timer - sets timer display and used to know when the time is up
 function countdown() {
 
   timerSeconds--;
@@ -255,8 +272,6 @@ function countdown() {
     clearInterval(intervalId);
   }
 
-}
-
-
+ } // end of countdown
 
 })  //********** end of document ready
