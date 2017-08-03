@@ -5,11 +5,16 @@ $(document).ready(function() {
 // Perform initialize tasks
 // Variables
 
+var rightAnswer = true;
+
 var correctAnswers = 0;
 var incorrectAnswers = 0;
 var unanswered = 0;
 
-var timerSeconds = 60;
+var questionNumber = 0
+
+var timerSeconds = 0;
+var timeToWait = 30;
 var intervalId;
 
 
@@ -107,84 +112,137 @@ var questions = {
 }
 
 //Stuff to run at load time
+$(".questionRow").addClass("hide");
+$(".answerPage").addClass("hide");
+$(".gameTimer").html(timeToWait);
 
-intervalId = setInterval(countdown, 1000);
+//********* Events 
+// Start logic
+$(".startButton").on("click", function() {
 
- //********* Events 
- // Start logic
- $(".startButton").on("click", function() {
- 
-    //update display hero
-    $(".startRow").addClass("hide");
+  // hide start button
+  $(".startRow").addClass("hide");
 
-    $.each(questions, function(key, value) {
+  //display first question
+  displayQuestion();
 
-      $(".triviaList").append('<div class="trivia">' + questions[key].question + "</div>");
-      $(".triviaList").append('<form  class="radioForm_' + key + ' radioForm"></form>');
-      var labelLeft = '<input type="radio" name="'
-      
-      $.each(questions[key].answers, function(index, value) {
-        //  console.log(labelLeft + key + '_'+ index + '">' + value)
-         $(".radioForm_" + key).append('<label class="radio-inline ' + key + index + '">');
-         $("." + key + index).append(labelLeft + key + '"' + 'value="' + value + '">' + value);
-       
-      }) //********** end of radio button each loop
+}) // *********** end of start button
 
-    })  //*********** end of main form creation
 
-        //Add a done button to end of list
-        $(".triviaList").append('<div><h3 class="text-primary doneButton">DONE</h3></div>');
+//********** this happens when a user selects an answer
+$(".answerBox").on("click", function() {
 
-  }) // *********** end of start button
- 
+  clearInterval(intervalId);
 
-  // The Done Button - user has finished selecting answers
+  if ($(this).data("rightAnswer") === true) {
+    
+    displayCongratsPage();
 
-  $(".triviaList").on("click", ".doneButton", checkAnswers);
+  } else {
+    
+    displaySorryPage("incorrect");
+  }
 
-  //check answers is called when time runs out or user clicks done
-  function checkAnswers() {
-   
-    clearInterval(intervalId);  
-    //loop based on questions object - 10 entries
-    $.each(questions, function(key, value) {
-
-      //get sets of radio buttons (q0, q1..)  Key equals radio button group name
-      var radios = document.getElementsByName(key);
-      var checkedValue = "";
-      console.log(radios)
+})
   
-      // find the checked one, if it exists
+//**********  Functions  **********
 
-      for (var i = 0; i < radios.length; i++) {
+// displays the questions and answers
+function displayQuestion() {
 
-       if (radios[i].checked) {          
-           checkedValue = radios[i].value; 
-           break;  
-        }
-      }  //********** end of for loop
+  //Counter for total questions in object
+  if (questionNumber === Object.keys(questions).length) {
+    displayResults();
+    return;
+  }
 
-      if (checkedValue === "") {
-        unanswered++;
-      } else if (checkedValue === questions[key].correctAnswer) {
-        correctAnswers++;
-      } else {
-        incorrectAnswers++;
-      }
+  //start the timer
+  timerSeconds = timeToWait;
+  $(".gameTimer").html(timerSeconds);
+  intervalId = setInterval(countdown, 1000);
 
-    }) //********** end of each questions loop
-    //hide the questions and done box
-    $(".triviaList").addClass("hide");
+  //display question on page
 
-    //Header for end page
-    $(".main-container").append('<h1 class="text-primary">All Done!</h1><br><br>');
-    $(".main-container").append('<h2 class="text-primary">Correct Answers: ' + correctAnswers + '</h2>');
-    $(".main-container").append('<h2 class="text-primary">Incorrect Answers: ' + incorrectAnswers + '</h2>');
-    $(".main-container").append('<h2 class="text-primary">Unanswered: ' + unanswered + '</h2>');
+  $(".answerPage").addClass("hide");
+  $(".questionRow").removeClass("hide");
 
-  }  // ********** end of check answers function
+  var objKey = "q" + questionNumber;
 
-//Functions
+  $(".trivia").html(questions[objKey].question);
+
+  $.each(questions[objKey].answers, function(index, value) {
+  //  console.log(labelLeft + key + '_'+ index + '">' + value)
+
+   $("#answerBox" + index).html(value);
+     if (questions[objKey].correctAnswer === value) {
+        rightAnswer = true;
+     } else {
+        rightAnswer = false;
+     }
+   $("#answerBox" + index).data("rightAnswer", rightAnswer);
+ 
+  }) //********** end of answer loop
+
+  questionNumber++;
+} //********** end of display quesiton
+
+//Congrats Page - displays if the answer is correct
+
+function displayCongratsPage() {
+
+   correctAnswers++
+   //hide the questions
+   $(".questionRow").addClass("hide");
+   $(".ansExclaim").html("Correct!");
+   $(".ansMessage1").html("U So Good!");
+   $(".ansMessage2").html("");  
+   $(".answerPage").removeClass("hide");
+
+   setTimeout(displayQuestion, 3000);
+
+}  //  ********* end of congrats page function
+
+function displaySorryPage(type) {
+
+  var mainMessage = "";
+
+  if (type === "timer") {
+    unanswered++;
+    mainMessage = "Sorry - The Timer Expired!";
+  } else {
+    incorrectAnswers++;
+    mainMessage = "Sorry!";
+  }
+
+   //hide the questions
+   var theAnswer = "";
+
+  for (var i = 0; i < 5; i++) {
+    if ($("#answerBox" + i).data("rightAnswer") === true ) {
+      theAnswer = $("#answerBox" + i).html();
+      break;
+    }
+  }
+
+  $(".questionRow").addClass("hide");
+  $(".ansExclaim").html(mainMessage);
+  $(".ansMessage1").html("The correct answer is " + theAnswer);
+  $(".ansMessage2").html("");  
+  $(".answerPage").removeClass("hide");
+
+   setTimeout(displayQuestion, 3000);
+
+}  //  ********* end of congrats page function
+
+function displayResults() {
+
+  $(".gameTimer").html(0);
+  $(".ansExclaim").html("Game Over ");
+  $(".ansMessage1").html("Correct Answers: " + correctAnswers);
+  $(".ansMessage2").html("Incorrect Answers: " + incorrectAnswers);  
+  $(".ansImg").html("Unanswered: " + unanswered);
+
+}
 
 function countdown() {
 
@@ -193,7 +251,7 @@ function countdown() {
 
   if (timerSeconds === 0) {
 
-    checkAnswers();
+    displaySorryPage("timer");
     clearInterval(intervalId);
   }
 
